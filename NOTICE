@@ -1,0 +1,38 @@
+NOTICE
+======
+
+font-sharder (part of this repository) bundles language-area and character-frequency
+data derived from cn-font-split:
+
+    cn-font-split — https://github.com/KonghaYao/cn-font-split
+    Copyright (c) KonghaYao and contributors
+    Licensed under the Apache License, Version 2.0
+    (a copy of the license text: https://www.apache.org/licenses/LICENSE-2.0)
+
+Vendored artifact
+-----------------
+    src/font_split/data/lang-unicodes.json
+
+Derived from these upstream files (`crates/lang_unicodes/`):
+
+    src/lib.rs             area table: 32 language areas, their ranges and order
+    src/cjk_unicodes.rs    Hiragana/Katakana and Hangul Jamo ranges
+    build.rs               CN_SYMBOL (Chinese punctuation) and CN_CHARS (Chinese
+                           character frequency list, 6767 characters)
+    scripts/syl-2.txt      Korean syllable frequency list (2026 syllables)
+
+Upstream reference: commit 1650af130b8c547b13a883ac7546f088ff193bf5
+
+The traditional-Chinese area (`ZH_TC` / tag `han-t`) is not shipped upstream as a
+list: upstream derives it by converting the frequency list to traditional Chinese
+with OpenCC (`Config::S2T`). `tools/gen_lang_data.py` performs the same derivation
+with the Python OpenCC dictionaries, keeping only characters that differ from the
+simplified list and that fit in the BMP (2303 characters).
+
+Regenerating
+------------
+    uv run --group dev python tools/gen_lang_data.py
+
+The generator only downloads from the pinned commit above and requires the `opencc`
+dictionary beyond the runtime dependencies. Its output is committed, so a normal
+build never touches the network.
